@@ -380,6 +380,7 @@ jobs:
           if-no-files-found: error
 
   server-image:
+    if: github.repository == 'JustCris654/Schisaciaccole'
     needs: version
     runs-on: ubuntu-latest
     permissions:

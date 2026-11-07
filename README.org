@@ -203,11 +203,13 @@ Two repository settings affect the release:
   - =APPLE_API_ISSUER_ID=
   - =APPLE_API_KEY_P8_BASE64=
 
-Tag pushes also build and push the server image to GHCR as
+Only in the original =JustCris654/Schisaciaccole= repository, tag pushes
+build and push the server image to GHCR as
 =ghcr.io/justcris654/schisaciaccole-server:<version>= and
 =ghcr.io/justcris654/schisaciaccole-server:latest=, where =<version>= is the
 version without the =v=. The first push creates a private package: make it
-public, or log in to GHCR on the host that pulls it.
+public, or log in to GHCR on the host that pulls it. Forks skip the
+=server-image= job, including manual workflow runs.
 
 * Backend (local development)
 
