@@ -28,8 +28,9 @@ you pressed the button.
 ** Meetings and speaking slots (with a backend)
 
 When the app is built against a backend (see
-[[*Building the app against a backend]]) and you sign in with Google, it lists
-today's remaining meetings from your calendar.
+[[#building-the-app-against-a-backend][Building the app against a backend]])
+and you sign in with Google, it lists today's remaining meetings from your
+calendar.
 
 - Click a meeting to count down to its end. The time left is split into
   speaking slots, one per participant; a short beep marks the end of each
@@ -46,9 +47,13 @@ today's remaining meetings from your calendar.
 
 * Screenshots
 
-| Selection                                           | Timer                                           |
-|-----------------------------------------------------+-------------------------------------------------|
-| [[crates/app/assets/screenshot_selection_page.png]] | [[crates/app/assets/screenshot_timer_page.png]] |
+| End time                               | Today's meetings                       | Speaking slots                                 |
+|----------------------------------------+----------------------------------------+------------------------------------------------|
+| [[assets/screenshot_end_time.png]]     | [[assets/screenshot_meetings.png]]     | [[assets/screenshot_speaking_slots.png]]       |
+
+| Meeting timer                           | Timer                               |
+|-----------------------------------------+-------------------------------------|
+| [[assets/screenshot_meeting_timer.png]] | [[assets/screenshot_timer.png]]     |
 
 * Requirements
 
@@ -69,6 +74,7 @@ The repo is a Cargo workspace:
   login, app sessions, meetings from Google Calendar and saved slot preferences.
 - =deploy/= — =Dockerfile= for the server and =docker-compose.yml= (server and
   PostgreSQL 17).
+- =assets/= — screenshots used by this README.
 
 * Build & run
 
@@ -83,7 +89,7 @@ cargo run -p schisaciaccole --release
 #+end_src
 
 Checks CI runs on every push and pull request (the server tests need PostgreSQL,
-see [[*Tests]]):
+see [[#tests][Tests]]):
 
 #+begin_src sh
 cargo test --workspace
@@ -94,7 +100,7 @@ cargo fmt --all --check
 * Packaging
 
 The app icons live at =crates/app/assets/icon_{128,256,512}.png= and the
-=crates/app/assets/level_up_no_copyright.mp3= sound ships as a resource. At
+=crates/app/assets/arcade_victory.mp3= sound ships as a resource. At
 runtime the sound is located relative to the executable, so it works from
 every package layout (dev, deb, macOS app, Arch pkg).
 
@@ -190,8 +196,9 @@ run artifacts without cutting a release.
 Two repository settings affect the release:
 
 - The repository variable =SCHISACIACCOLE_BACKEND_URL= is the backend URL baked
-  into the desktop builds (see [[*Building the app against a backend]]). Unset
-  means local-only builds.
+  into the desktop builds (see
+  [[#building-the-app-against-a-backend][Building the app against a backend]]).
+  Unset means local-only builds.
 - The optional macOS signing secrets. Set all seven or none: a partial set fails
   the run instead of producing an unsigned build. Without them the macOS build
   is unsigned. The names are:
@@ -267,6 +274,9 @@ Google Cloud organization, then:
   =GOOGLE_CLIENT_SECRET=, and set =ALLOWED_HD= to the company domain.
 
 * Tests
+:PROPERTIES:
+:CUSTOM_ID: tests
+:END:
 
 The server tests need a running PostgreSQL. =#[sqlx::test]= creates a throwaway
 database per test, so the user in =DATABASE_URL= must be allowed to create
@@ -290,6 +300,9 @@ Commit the =.sqlx/= directory. Builds without a database use =.sqlx/=
 automatically; =SQLX_OFFLINE=true= forces that.
 
 * Building the app against a backend
+:PROPERTIES:
+:CUSTOM_ID: building-the-app-against-a-backend
+:END:
 
 The desktop app talks to the backend through a URL fixed at compile time:
 
