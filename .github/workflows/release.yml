@@ -64,11 +64,15 @@ jobs:
         working-directory: crates/app
         env:
           SCHISACIACCOLE_BACKEND_URL: ${{ vars.SCHISACIACCOLE_BACKEND_URL }}
+          SCHISACIACCOLE_DEFAULT_THEME: ${{ vars.SCHISACIACCOLE_DEFAULT_THEME }}
         run: |
           if [ -n "$SCHISACIACCOLE_BACKEND_URL" ]; then
             echo "backend URL baked into the build: $SCHISACIACCOLE_BACKEND_URL"
           else
             echo "SCHISACIACCOLE_BACKEND_URL not set: building the local-only app"
+          fi
+          if [ -z "$SCHISACIACCOLE_DEFAULT_THEME" ]; then
+            unset SCHISACIACCOLE_DEFAULT_THEME
           fi
           cargo bundle --release --format deb
 
@@ -117,10 +121,11 @@ jobs:
         run: sed -i "s/^pkgver=.*/pkgver=${{ needs.version.outputs.version }}/" packaging/arch/PKGBUILD
 
       - name: Build package with makepkg
-        # sudo resets the environment, so pass the backend URL to makepkg
+        # sudo resets the environment, so pass build settings to makepkg
         # explicitly; cargo inherits it from makepkg's build().
         env:
           SCHISACIACCOLE_BACKEND_URL: ${{ vars.SCHISACIACCOLE_BACKEND_URL }}
+          SCHISACIACCOLE_DEFAULT_THEME: ${{ vars.SCHISACIACCOLE_DEFAULT_THEME }}
         run: |
           if [ -n "$SCHISACIACCOLE_BACKEND_URL" ]; then
             echo "backend URL baked into the build: $SCHISACIACCOLE_BACKEND_URL"
@@ -130,7 +135,13 @@ jobs:
           useradd -m builder
           chown -R builder: "$GITHUB_WORKSPACE"
           cd packaging/arch
-          sudo -u builder env SCHISACIACCOLE_BACKEND_URL="$SCHISACIACCOLE_BACKEND_URL" makepkg -f
+          if [ -n "$SCHISACIACCOLE_DEFAULT_THEME" ]; then
+            sudo -u builder env SCHISACIACCOLE_BACKEND_URL="$SCHISACIACCOLE_BACKEND_URL" \
+              SCHISACIACCOLE_DEFAULT_THEME="$SCHISACIACCOLE_DEFAULT_THEME" makepkg -f
+          else
+            sudo -u builder env -u SCHISACIACCOLE_DEFAULT_THEME \
+              SCHISACIACCOLE_BACKEND_URL="$SCHISACIACCOLE_BACKEND_URL" makepkg -f
+          fi
 
       - name: Name the artifact after its target OS
         run: |
@@ -165,11 +176,15 @@ jobs:
         working-directory: crates/app
         env:
           SCHISACIACCOLE_BACKEND_URL: ${{ vars.SCHISACIACCOLE_BACKEND_URL }}
+          SCHISACIACCOLE_DEFAULT_THEME: ${{ vars.SCHISACIACCOLE_DEFAULT_THEME }}
         run: |
           if [ -n "$SCHISACIACCOLE_BACKEND_URL" ]; then
             echo "backend URL baked into the build: $SCHISACIACCOLE_BACKEND_URL"
           else
             echo "SCHISACIACCOLE_BACKEND_URL not set: building the local-only app"
+          fi
+          if [ -z "$SCHISACIACCOLE_DEFAULT_THEME" ]; then
+            unset SCHISACIACCOLE_DEFAULT_THEME
           fi
           cargo bundle --release --format osx
 

@@ -262,12 +262,17 @@ fails the run before anything is built. The workflow can also be triggered
 manually (`workflow_dispatch`) to build and upload all three packages as
 run artifacts without cutting a release.
 
-Two repository settings affect the release:
+These repository settings affect the release:
 
 - The repository variable `SCHISACIACCOLE_BACKEND_URL` is the backend URL baked
   into the desktop builds (see
   [Building the app against a backend](#building-the-app-against-a-backend)).
   Unset means local-only builds.
+- The repository variable `SCHISACIACCOLE_DEFAULT_THEME` selects the default
+  theme embedded in the Linux `.deb`, Arch and macOS desktop builds. Valid IDs
+  are `schisaciaccole`, `openmove-1`, `openmove-2` and `openmove-3`. When unset,
+  the workflow omits the build variable and the default is `schisaciaccole`.
+  Users with a saved theme keep their choice.
 - The optional macOS signing secrets. Set all seven or none: a partial set fails
   the run instead of producing an unsigned build. Without them the macOS build
   is unsigned. The names are:
